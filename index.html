@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Правда или ложь: Мои таланты — Мягкая математика</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  color: #2d3436;
+  min-height: 100vh;
+  padding: 20px;
+  position: relative;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(108, 92, 231, 0.10) 0%, transparent 45%),
+    radial-gradient(circle at 100% 0%, rgba(253, 121, 168, 0.10) 0%, transparent 45%),
+    radial-gradient(circle at 0% 100%, rgba(0, 184, 148, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 100% 100%, rgba(253, 203, 110, 0.08) 0%, transparent 45%),
+    #fef9f3;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(108, 92, 231, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 80% 70%, rgba(253, 121, 168, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(0, 184, 148, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px, 80px 80px, 100px 100px;
+  background-color: #fef9f3;
+}
+
+body::before {
+  content: "Мягкая математика · ОГЭ/ЕГЭ · Олимпиады · ВПР · vk.com/smartskillsmaria";
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-22deg);
+  font-size: 36px; font-weight: 900;
+  color: rgba(108, 92, 231, 0.04);
+  white-space: nowrap;
+  pointer-events: none; z-index: 0;
+  user-select: none; letter-spacing: 3px;
+  font-family: 'Arial Black', 'Arial', sans-serif;
+}
+
+.container { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
+.screen { display: none; animation: fadeIn 0.5s ease; }
+.screen.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.btn {
+  display: inline-block;
+  background: #00b894; color: #fff;
+  padding: 16px 48px; border-radius: 60px;
+  font-size: 18px; font-weight: 700;
+  border: none; cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 184, 148, 0.4);
+  transition: all 0.3s ease;
+  font-family: 'Arial', sans-serif;
+  margin: 5px;
+}
+.btn:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0, 184, 148, 0.5); }
+.btn-secondary { background: #6c5ce7; box-shadow: 0 8px 24px rgba(108, 92, 231, 0.4); }
+.btn-secondary:hover { box-shadow: 0 12px 32px rgba(108, 92, 231, 0.5); }
+.btn-small { padding: 10px 24px; font-size: 14px; border-radius: 40px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.start-card {
+  background: linear-gradient(135deg, #6c5ce7, #fd79a8);
+  color: #fff; padding: 50px 40px;
+  border-radius: 30px; text-align: center;
+  box-shadow: 0 20px 60px rgba(108, 92, 231, 0.3);
+}
+.start-card h1 { font-size: 38px; margin-bottom: 12px; }
+.start-card .subtitle { font-size: 18px; opacity: 0.95; margin-bottom: 8px; }
+.start-card .desc { font-size: 15px; opacity: 0.85; margin-bottom: 25px; line-height: 1.7; }
+
+.ad-block {
+  background: rgba(255, 255, 255, 0.15);
+  border-left: 4px solid #fff;
+  padding: 15px 20px; margin-top: 25px;
+  border-radius: 12px; font-size: 14px;
+  line-height: 1.7; text-align: left;
+  backdrop-filter: blur(5px);
+}
+.ad-block.light { background: #f8f9fa; border-left: 4px solid #6c5ce7; color: #636e72; }
+.ad-block a { color: #fff; font-weight: 700; text-decoration: underline; display: inline-block; margin: 2px 0; }
+.ad-block.light a { color: #6c5ce7; }
+.ad-block a:hover { opacity: 0.8; }
+
+.screen-header {
+  background: #fff; padding: 20px 25px;
+  border-radius: 60px; margin-bottom: 20px;
+  display: flex; justify-content: space-between;
+  align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+  flex-wrap: wrap; gap: 10px;
+}
+.screen-header h2 { font-size: 20px; color: #6c5ce7; }
+.screen-header .step { font-size: 14px; color: #636e72; font-weight: 700; }
+
+.slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+.slot {
+  background: #fff; border: 3px dashed #dfe6e9;
+  border-radius: 20px; padding: 20px 15px;
+  min-height: 120px; text-align: center;
+  transition: all 0.3s ease;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 8px; position: relative;
+}
+.slot.drag-over { border-color: #6c5ce7; background: rgba(108,92,231,0.05); transform: scale(1.02); }
+.slot.filled { border-style: solid; border-color: #00b894; background: rgba(0,184,148,0.04); }
+.slot .slot-label {
+  font-size: 12px; font-weight: 700;
+  color: #b2bec3; text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.slot .slot-talent {
+  font-size: 15px; font-weight: 700; color: #2d3436;
+  padding: 6px 12px; background: #f0edff;
+  border-radius: 30px; cursor: pointer;
+  transition: all 0.2s ease;
+}
+.slot .slot-talent:hover { background: #f8d7da; }
+.slot .slot-hint { font-size: 11px; color: #b2bec3; font-style: italic; }
+
+.categories {
+  background: #fff; padding: 25px;
+  border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  margin-bottom: 20px; max-height: 450px; overflow-y: auto;
+}
+.category { margin-bottom: 20px; }
+.category:last-child { margin-bottom: 0; }
+.category h3 {
+  font-size: 15px; color: #6c5ce7;
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 2px dashed #dfe6e9;
+}
+.items { display: flex; flex-wrap: wrap; gap: 8px; }
+.talent-item {
+  padding: 8px 16px; background: #f8f9fa;
+  border: 2px solid #dfe6e9; border-radius: 30px;
+  font-size: 14px; cursor: grab;
+  transition: all 0.2s ease; user-select: none;
+}
+.talent-item:hover { border-color: #6c5ce7; background: #f0edff; transform: translateY(-2px); }
+.talent-item:active { cursor: grabbing; }
+.talent-item.dragging { opacity: 0.4; transform: scale(0.95); }
+.talent-item.used { opacity: 0.3; pointer-events: none; }
+
+.presentation-card {
+  background: #fff; padding: 30px;
+  border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+.presentation-card .talent-row { padding: 18px 0; border-bottom: 2px dashed #dfe6e9; }
+.presentation-card .talent-row:last-child { border-bottom: none; }
+.presentation-card .talent-name {
+  font-size: 18px; font-weight: 700;
+  color: #6c5ce7; margin-bottom: 8px;
+}
+.presentation-card .talent-name .icon { font-size: 22px; margin-right: 8px; }
+.presentation-card textarea {
+  width: 100%; padding: 12px;
+  border: 2px solid #dfe6e9; border-radius: 12px;
+  font-family: 'Arial', sans-serif; font-size: 14px;
+  resize: vertical; min-height: 60px;
+  transition: border-color 0.2s;
+}
+.presentation-card textarea:focus { outline: none; border-color: #6c5ce7; }
+
+.guess-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+.guess-option {
+  background: #fff; padding: 25px 20px;
+  border-radius: 20px; border: 3px solid #dfe6e9;
+  text-align: center; cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px; font-weight: 700;
+  color: #2d3436;
+  font-family: 'Arial', sans-serif;
+  word-break: break-word;
+}
+.guess-option:hover { border-color: #6c5ce7; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(108,92,231,0.15); }
+.guess-option.correct { border-color: #00b894; background: #d4edda; color: #155724; }
+.guess-option.wrong { border-color: #e74c3c; background: #f8d7da; color: #721c24; }
+.guess-option:disabled { cursor: not-allowed; transform: none; }
+
+.feedback {
+  margin-top: 20px; padding: 20px;
+  border-radius: 16px; font-size: 16px;
+  line-height: 1.7; display: none;
+}
+.feedback.show { display: block; animation: fadeIn 0.3s ease; }
+.feedback.correct { background: #d4edda; border-left: 5px solid #00b894; color: #155724; }
+.feedback.wrong { background: #fff3cd; border-left: 5px solid #fdcb6e; color: #856404; }
+.feedback .feedback-title { font-weight: 700; font-size: 18px; margin-bottom: 8px; }
+.feedback .ad-hint {
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid rgba(0,0,0,0.1); font-size: 14px;
+}
+.feedback .ad-hint a { color: #6c5ce7; font-weight: 700; text-decoration: none; }
+.feedback .ad-hint a:hover { text-decoration: underline; }
+
+.result-card {
+  background: #fff; padding: 40px 30px;
+  border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  text-align: center;
+}
+.result-card h1 { font-size: 36px; color: #6c5ce7; margin-bottom: 15px; }
+.result-card .result-text { font-size: 20px; color: #2d3436; margin-bottom: 10px; line-height: 1.6; }
+.result-card .result-emoji { font-size: 64px; margin: 20px 0; }
+
+.popup-overlay {
+  display: none; position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); z-index: 999;
+  justify-content: center; align-items: center;
+  padding: 20px;
+}
+.popup-overlay.show { display: flex; animation: fadeIn 0.3s ease; }
+.popup-content {
+  background: #fff; padding: 35px 30px;
+  border-radius: 24px; max-width: 420px;
+  width: 100%; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  position: relative;
+}
+.popup-content h3 { font-size: 24px; color: #6c5ce7; margin-bottom: 15px; }
+.popup-content p { font-size: 16px; color: #636e72; margin-bottom: 10px; line-height: 1.6; }
+.popup-content .ad-block.light {
+  text-align: center; border-left: none;
+  border-top: 3px solid #6c5ce7; margin-top: 20px; padding-top: 20px;
+}
+.popup-content .close-btn {
+  position: absolute; top: 15px; right: 20px;
+  background: none; border: none; font-size: 28px;
+  color: #b2bec3; cursor: pointer; transition: color 0.2s;
+  font-family: 'Arial', sans-serif;
+}
+.popup-content .close-btn:hover { color: #636e72; }
+
+@media (max-width: 700px) {
+  body::before { font-size: 20px; }
+  .start-card { padding: 35px 25px; }
+  .start-card h1 { font-size: 26px; }
+  .slots { grid-template-columns: 1fr; }
+  .guess-options { grid-template-columns: 1fr; }
+  .slot { min-height: 90px; }
+  .screen-header h2 { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- СТАРТ -->
+  <div id="start-screen" class="screen active">
+    <div class="start-card">
+      <h1>🎭 Правда или ложь</h1>
+      <p class="subtitle">Игра о талантах и мечтах</p>
+      <p class="desc">
+        Выбери <strong>2 настоящих таланта</strong> и <strong>1 мечту</strong>.<br>
+        А потом другие попробуют угадать, где ложь!
+      </p>
+      <button class="btn" onclick="startGame()">🚀 Начать игру</button>
+
+      <div class="ad-block">
+        <p><strong>Хочешь раскрыть свои таланты?</strong></p>
+        <p>Приходи в «Мягкую математику»! Подготовка к ОГЭ/ЕГЭ, олимпиадам и ВПР.</p>
+        <a href="https://vk.com/smartskillsmaria" target="_blank" rel="noopener">📢 Подписывайся на группу</a><br>
+        <a href="https://vk.com/im/convo/-229273902?entrypoint=community_page&tab=all" target="_blank" rel="noopener">✉️ Пиши Марии Абрамовой</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ВЫБОР ТАЛАНТОВ -->
+  <div id="select-screen" class="screen">
+    <div class="screen-header">
+      <h2>Выбери 3 таланта</h2>
+      <div class="step">Шаг 1 из 3</div>
+    </div>
+
+    <div class="slots">
+      <div class="slot" id="slot-1"
+           ondragover="allowDrop(event)" ondrop="dropOnSlot(event, 'slot-1')"
+           ondragleave="leaveSlot(event)">
+        <div class="slot-label">Настоящий талант №1</div>
+        <div class="slot-hint">Перетащи сюда</div>
+      </div>
+      <div class="slot" id="slot-2"
+           ondragover="allowDrop(event)" ondrop="dropOnSlot(event, 'slot-2')"
+           ondragleave="leaveSlot(event)">
+        <div class="slot-label">Настоящий талант №2</div>
+        <div class="slot-hint">Перетащи сюда</div>
+      </div>
+      <div class="slot" id="slot-3"
+           ondragover="allowDrop(event)" ondrop="dropOnSlot(event, 'slot-3')"
+           ondragleave="leaveSlot(event)">
+        <div class="slot-label">🌟 Моя мечта</div>
+        <div class="slot-hint">Перетащи сюда</div>
+      </div>
+    </div>
+
+    <div class="categories" id="categories"></div>
+
+    <div style="text-align: center;">
+      <button class="btn" id="next-btn-1" onclick="goToPresentation()" disabled>Далее →</button>
+      <button class="btn btn-secondary btn-small" onclick="resetSelection()">🔄 Сбросить</button>
+    </div>
+  </div>
+
+  <!-- ПРЕЗЕНТАЦИЯ -->
+  <div id="presentation-screen" class="screen">
+    <div class="screen-header">
+      <h2>Расскажи о своих талантах</h2>
+      <div class="step">Шаг 2 из 3</div>
+    </div>
+
+    <div class="presentation-card" id="presentation-card"></div>
+
+    <div style="text-align: center;">
+      <button class="btn" onclick="goToGuess()">Готово →</button>
+    </div>
+  </div>
+
+  <!-- УГАДАЙ -->
+  <div id="guess-screen" class="screen">
+    <div class="screen-header">
+      <h2>Какой талант вымышленный?</h2>
+      <div class="step">Шаг 3 из 3</div>
+    </div>
+
+    <div class="guess-options" id="guess-options"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <button class="btn btn-secondary" onclick="restartGame()">🔄 Играть снова</button>
+    </div>
+  </div>
+
+  <!-- РЕЗУЛЬТАТ -->
+  <div id="result-screen" class="screen">
+    <div class="result-card">
+      <div class="result-emoji" id="result-emoji">🎉</div>
+      <h1 id="result-title">Игра завершена!</h1>
+      <p class="result-text" id="result-text"></p>
+
+      <div style="margin-top: 25px;">
+        <button class="btn btn-secondary" onclick="restartGame()">🔄 Играть снова</button>
+      </div>
+
+      <div class="ad-block light" style="text-align: center; border-left: none; border-top: 4px solid #6c5ce7; margin-top: 30px;">
+        <p><strong>Ты — талантлив! Развивай свои таланты в «Мягкой математике»!</strong></p>
+        <p>Курсы для 1–11 классов. Подготовка к ОГЭ/ЕГЭ, олимпиадам, ВПР.</p>
+        <a href="https://vk.com/smartskillsmaria" target="_blank" rel="noopener">📢 Подписывайся на группу</a><br>
+        <a href="https://vk.com/im/convo/-229273902?entrypoint=community_page&tab=all" target="_blank" rel="noopener">✉️ Пиши Марии Абрамовой</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ПОПАП -->
+<div class="popup-overlay" id="popup-ad">
+  <div class="popup-content">
+    <button class="close-btn" onclick="closePopup()">×</button>
+    <h3>Отличный выбор! 🚀</h3>
+    <p>Ты выбрал свои таланты и мечту!</p>
+    <p>Хочешь развить их ещё сильнее?</p>
+
+    <div class="ad-block light">
+      <p><strong>«Мягкая математика»</strong> — это:</p>
+      <p>✅ Подготовка к ОГЭ/ЕГЭ<br>
+         ✅ Олимпиадная математика<br>
+         ✅ ВПР и школьная программа<br>
+         ✅ Мягкие навыки и финансовая грамотность</p>
+      <a href="https://vk.com/smartskillsmaria" target="_blank" rel="noopener">📢 Подписывайся на группу</a><br>
+      <a href="https://vk.com/im/convo/-229273902?entrypoint=community_page&tab=all" target="_blank" rel="noopener">✉️ Пиши Марии Абрамовой</a>
+    </div>
+
+    <button class="btn" onclick="closePopup()">Продолжить →</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// СПИСОК ТАЛАНТОВ
+// ============================================================
+const talents = [
+  { category: "🎨 Творческие", items: ["Рисование", "Лепка из пластилина", "Оригами", "Аппликация", "Вышивание", "Вязание", "Бисероплетение", "Резьба по дереву", "Лепка из глины", "Каллиграфия"] },
+  { category: "🎵 Музыкальные", items: ["Игра на пианино", "Игра на гитаре", "Игра на скрипке", "Игра на флейте", "Игра на барабанах", "Пение", "Сочинение песен", "Игра в оркестре", "Чтение нот", "Музыкальный слух"] },
+  { category: "🏃 Спортивные", items: ["Бег", "Плавание", "Футбол", "Баскетбол", "Волейбол", "Теннис", "Гимнастика", "Фигурное катание", "Единоборства", "Йога"] },
+  { category: "💃 Танцевальные", items: ["Классический танец", "Народный танец", "Современный танец", "Хип-хоп", "Бальные танцы", "Чечётка", "Танцы на льду", "Импровизация", "Пластика", "Ритмика"] },
+  { category: "🗣️ Коммуникативные", items: ["Публичные выступления", "Убеждение", "Слушание", "Эмпатия", "Юмор", "Сторителлинг", "Ведение переговоров", "Работа в команде", "Лидерство", "Наставничество"] },
+  { category: "🧠 Интеллектуальные", items: ["Быстрый счёт", "Решение головоломок", "Шахматы", "Логика", "Память", "Внимание", "Скорочтение", "Изучение языков", "Программирование", "Робототехника"] },
+  { category: "🔬 Научные", items: ["Эксперименты", "Наблюдение", "Коллекционирование", "Исследование", "Моделирование", "Астрономия", "Биология", "Химия", "Физика", "География"] },
+  { category: "🍳 Бытовые", items: ["Готовка", "Выпечка", "Сервировка стола", "Уборка", "Садоводство", "Уход за животными", "Ремонт", "Шитьё", "Кулинарные эксперименты", "Организация пространства"] },
+  { category: "🎭 Артистические", items: ["Актёрское мастерство", "Импровизация", "Кукольный театр", "Мимика", "Пантомима", "Чтение стихов", "Декламация", "Озвучивание", "Режиссура", "Сценарии"] },
+  { category: "💻 Цифровые", items: ["Фотография", "Видеосъёмка", "Монтаж", "Дизайн", "Анимация", "Блогинг", "Создание презентаций", "Работа с нейросетями", "Кибербезопасность", "3D-моделирование"] },
+  { category: "🌟 Фантастические мечты", items: ["Умение летать", "Разговор с животными", "Управление погодой", "Чтение мыслей", "Телепортация", "Невидимость", "Управление драконом", "Понимание языка дельфинов", "Создание волшебных зелий", "Путешествие во времени"] }
+];
+
+// ============================================================
+// СОСТОЯНИЕ ИГРЫ (ИСПРАВЛЕНО: ключи с дефисом)
+// ============================================================
+let selectedTalents = { "slot-1": null, "slot-2": null, "slot-3": null };
+let popupShown = false;
+
+// ============================================================
+// ФУНКЦИИ ИГРЫ
+// ============================================================
+
+function startGame() {
+  document.getElementById('start-screen').classList.remove('active');
+  document.getElementById('select-screen').classList.add('active');
+  renderTalents();
+  resetSelection();
+}
+
+function renderTalents() {
+  const container = document.getElementById('categories');
+  container.innerHTML = '';
+
+  talents.forEach(cat => {
+    const catDiv = document.createElement('div');
+    catDiv.className = 'category';
+
+    const h3 = document.createElement('h3');
+    h3.textContent = cat.category;
+    catDiv.appendChild(h3);
+
+    const itemsDiv = document.createElement('div');
+    itemsDiv.className = 'items';
+
+    cat.items.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'talent-item';
+      el.textContent = item;
+      el.draggable = true;
+      el.dataset.name = item;
+
+      el.addEventListener('dragstart', handleDragStart);
+      el.addEventListener('dragend', handleDragEnd);
+      el.addEventListener('click', handleTalentClick);
+
+      itemsDiv.appendChild(el);
+    });
+
+    catDiv.appendChild(itemsDiv);
+    container.appendChild(catDiv);
+  });
+}
+
+// ============================================================
+// DRAG & DROP
+// ============================================================
+function handleDragStart(e) {
+  if (this.classList.contains('used')) {
+    e.preventDefault();
+    return;
+  }
+  e.dataTransfer.setData('text/plain', this.dataset.name);
+  e.dataTransfer.effectAllowed = 'move';
+  this.classList.add('dragging');
+}
+
+function handleDragEnd(e) {
+  this.classList.remove('dragging');
+  document.querySelectorAll('.slot').forEach(s => s.classList.remove('drag-over'));
+}
+
+function allowDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+
+function leaveSlot(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function dropOnSlot(e, slotId) {
+  e.preventDefault();
+  const slot = document.getElementById(slotId);
+  slot.classList.remove('drag-over');
+
+  const talentName = e.dataTransfer.getData('text/plain');
+  if (!talentName) return;
+
+  // Проверка: не выбран ли уже этот талант в другой ячейке
+  const alreadyUsed = Object.values(selectedTalents).includes(talentName);
+  if (alreadyUsed && selectedTalents[slotId] !== talentName) {
+    return;
+  }
+
+  // Если в ячейке уже есть талант — вернуть в список
+  if (selectedTalents[slotId]) {
+    restoreTalentToList(selectedTalents[slotId]);
+  }
+
+  // Убираем из списка
+  const talentEl = findTalentInList(talentName);
+  if (talentEl) talentEl.classList.add('used');
+
+  // Добавляем в ячейку
+  selectedTalents[slotId] = talentName;
+  updateSlot(slotId, talentName);
+
+  checkNextButton();
+}
+
+function handleTalentClick(e) {
+  if (e.currentTarget.classList.contains('used')) return;
+
+  const freeSlot = ['slot-1', 'slot-2', 'slot-3'].find(s => !selectedTalents[s]);
+  if (!freeSlot) return;
+
+  const talentName = e.currentTarget.dataset.name;
+  e.currentTarget.classList.add('used');
+  selectedTalents[freeSlot] = talentName;
+  updateSlot(freeSlot, talentName);
+  checkNextButton();
+}
+
+function updateSlot(slotId, talentName) {
+  const slot = document.getElementById(slotId);
+  slot.classList.add('filled');
+
+  // Пересоздаём label
+  const labelText = {
+    'slot-1': 'Настоящий талант №1',
+    'slot-2': 'Настоящий талант №2',
+    'slot-3': '🌟 Моя мечта'
+  }[slotId];
+
+  slot.innerHTML = '';
+
+  const label = document.createElement('div');
+  label.className = 'slot-label';
+  label.textContent = labelText;
+  slot.appendChild(label);
+
+  const talentDiv = document.createElement('div');
+  talentDiv.className = 'slot-talent';
+  talentDiv.textContent = talentName;
+  talentDiv.onclick = () => removeFromSlot(slotId);
+  slot.appendChild(talentDiv);
+}
+
+function removeFromSlot(slotId) {
+  const talentName = selectedTalents[slotId];
+  if (!talentName) return;
+
+  restoreTalentToList(talentName);
+  selectedTalents[slotId] = null;
+
+  const slot = document.getElementById(slotId);
+  slot.classList.remove('filled');
+
+  const labelText = {
+    'slot-1': 'Настоящий талант №1',
+    'slot-2': 'Настоящий талант №2',
+    'slot-3': '🌟 Моя мечта'
+  }[slotId];
+
+  slot.innerHTML = '';
+
+  const label = document.createElement('div');
+  label.className = 'slot-label';
+  label.textContent = labelText;
+  slot.appendChild(label);
+
+  const hint = document.createElement('div');
+  hint.className = 'slot-hint';
+  hint.textContent = 'Перетащи сюда';
+  slot.appendChild(hint);
+
+  checkNextButton();
+}
+
+function restoreTalentToList(talentName) {
+  document.querySelectorAll('.talent-item').forEach(el => {
+    if (el.dataset.name === talentName) {
+      el.classList.remove('used');
+    }
+  });
+}
+
+function findTalentInList(talentName) {
+  const allItems = document.querySelectorAll('.talent-item');
+  for (let el of allItems) {
+    if (el.dataset.name === talentName) return el;
+  }
+  return null;
+}
+
+function checkNextButton() {
+  const filled = Object.values(selectedTalents).filter(v => v !== null).length;
+  document.getElementById('next-btn-1').disabled = (filled !== 3);
+}
+
+function resetSelection() {
+  selectedTalents = { "slot-1": null, "slot-2": null, "slot-3": null };
+  document.querySelectorAll('.talent-item').forEach(el => el.classList.remove('used'));
+
+  ['slot-1', 'slot-2', 'slot-3'].forEach(slotId => {
+    const slot = document.getElementById(slotId);
+    slot.classList.remove('filled');
+
+    const labelText = {
+      'slot-1': 'Настоящий талант №1',
+      'slot-2': 'Настоящий талант №2',
+      'slot-3': '🌟 Моя мечта'
+    }[slotId];
+
+    slot.innerHTML = '';
+
+    const label = document.createElement('div');
+    label.className = 'slot-label';
+    label.textContent = labelText;
+    slot.appendChild(label);
+
+    const hint = document.createElement('div');
+    hint.className = 'slot-hint';
+    hint.textContent = 'Перетащи сюда';
+    slot.appendChild(hint);
+  });
+
+  checkNextButton();
+}
+
+// ============================================================
+// ЭКРАН 3: ПРЕЗЕНТАЦИЯ
+// ============================================================
+function goToPresentation() {
+  // Проверка: все ли ячейки заполнены
+  const filled = Object.values(selectedTalents).filter(v => v !== null).length;
+  if (filled !== 3) {
+    alert('Пожалуйста, выбери все 3 таланта!');
+    return;
+  }
+
+  document.getElementById('select-screen').classList.remove('active');
+  document.getElementById('presentation-screen').classList.add('active');
+
+  const card = document.getElementById('presentation-card');
+  card.innerHTML = '';
+
+  const slots = [
+    { id: 'slot-1', label: '✅ Настоящий талант №1', icon: '💪' },
+    { id: 'slot-2', label: '✅ Настоящий талант №2', icon: '🎯' },
+    { id: 'slot-3', label: '🌟 Моя мечта', icon: '✨' }
+  ];
+
+  slots.forEach(slot => {
+    const row = document.createElement('div');
+    row.className = 'talent-row';
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'talent-name';
+    nameDiv.innerHTML = `<span class="icon">${slot.icon}</span>${slot.label}: <strong>${selectedTalents[slot.id]}</strong>`;
+    row.appendChild(nameDiv);
+
+    const textarea = document.createElement('textarea');
+    textarea.placeholder = slot.id === 'slot-3'
+      ? 'Почему ты мечтаешь об этом?'
+      : 'Как давно ты это умеешь? Что тебе нравится?';
+    textarea.dataset.slot = slot.id;
+    row.appendChild(textarea);
+
+    card.appendChild(row);
+  });
+
+  if (!popupShown) {
+    popupShown = true;
+    setTimeout(() => {
+      document.getElementById('popup-ad').classList.add('show');
+    }, 800);
+  }
+}
+
+// ============================================================
+// ЭКРАН 4: УГАДЫВАНИЕ
+// ============================================================
+function goToGuess() {
+  // Проверка: все ли таланты на месте
+  const filled = Object.values(selectedTalents).filter(v => v !== null).length;
+  if (filled !== 3) {
+    alert('Что-то пошло не так. Попробуй выбрать таланты заново.');
+    restartGame();
+    return;
+  }
+
+  document.getElementById('presentation-screen').classList.remove('active');
+  document.getElementById('guess-screen').classList.add('active');
+
+  // Формируем массив: 2 настоящих + 1 мечта
+  const shuffled = [
+    { name: selectedTalents['slot-1'], correct: false },
+    { name: selectedTalents['slot-2'], correct: false },
+    { name: selectedTalents['slot-3'], correct: true }
+  ].sort(() => Math.random() - 0.5);
+
+  const container = document.getElementById('guess-options');
+  container.innerHTML = '';
+
+  shuffled.forEach((item, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'guess-option';
+    btn.textContent = item.name;
+    btn.dataset.correct = item.correct;
+    btn.onclick = () => checkGuess(btn, item.correct);
+    container.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+}
+
+function checkGuess(btn, isCorrect) {
+  const allBtns = document.querySelectorAll('.guess-option');
+  allBtns.forEach(b => b.disabled = true);
+
+  const feedback = document.getElementById('feedback');
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    feedback.className = 'feedback correct show';
+    feedback.innerHTML = `
+      <div class="feedback-title">✅ Правильно! Ты угадал мечту!</div>
+      <div class="explanation">«${btn.textContent}» — это была мечта. Отличная интуиция!</div>
+      <div class="ad-hint">
+        💡 Хочешь развить свои таланты? <a href="https://vk.com/smartskillsmaria" target="_blank" rel="noopener">Подписывайся на группу «Мягкой математики»</a> · <a href="https://vk.com/im/convo/-229273902?entrypoint=community_page&tab=all" target="_blank" rel="noopener">Пиши Марии Абрамовой</a>
+      </div>
+    `;
+  } else {
+    btn.classList.add('wrong');
+    const correctBtn = document.querySelector('.guess-option[data-correct="true"]');
+    if (correctBtn) correctBtn.classList.add('correct');
+
+    feedback.className = 'feedback wrong show';
+    feedback.innerHTML = `
+      <div class="feedback-title">🤔 Не угадал!</div>
+      <div class="explanation">Мечта — это «${correctBtn ? correctBtn.textContent : '...'}». Не расстраивайся, ошибка — это данные для роста!</div>
+      <div class="ad-hint">
+        💡 Хочешь научиться лучше понимать других? <a href="https://vk.com/smartskillsmaria" target="_blank" rel="noopener">Приходи в «Мягкую математику»</a> · <a href="https://vk.com/im/convo/-229273902?entrypoint=community_page&tab=all" target="_blank" rel="noopener">Пиши Марии</a>
+      </div>
+    `;
+  }
+
+  setTimeout(() => {
+    document.getElementById('guess-screen').classList.remove('active');
+    document.getElementById('result-screen').classList.add('active');
+    showResult(isCorrect);
+  }, 2500);
+}
+
+// ============================================================
+// ЭКРАН 5: РЕЗУЛЬТАТ
+// ============================================================
+function showResult(wasCorrect) {
+  const resultEmoji = document.getElementById('result-emoji');
+  const resultTitle = document.getElementById('result-title');
+  const resultText = document.getElementById('result-text');
+
+  if (wasCorrect) {
+    resultEmoji.textContent = '🏆';
+    resultTitle.textContent = 'Превосходно!';
+    resultText.textContent = 'Ты угадал мечту! Отличная интуиция и внимание к деталям!';
+  } else {
+    resultEmoji.textContent = '💪';
+    resultTitle.textContent = 'Хорошая попытка!';
+    resultText.textContent = 'Ты не угадал, но это отличный опыт! Помни: ошибка — это данные для роста.';
+  }
+}
+
+// ============================================================
+// ОБЩИЕ ФУНКЦИИ
+// ============================================================
+function restartGame() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('start-screen').classList.add('active');
+  selectedTalents = { "slot-1": null, "slot-2": null, "slot-3": null };
+  popupShown = false;
+}
+
+function closePopup() {
+  document.getElementById('popup-ad').classList.remove('show');
+}
+
+document.getElementById('popup-ad').addEventListener('click', function(e) {
+  if (e.target === this) closePopup();
+});
+
+console.log('🎭 Игра «Правда или ложь: Мои таланты» загружена!');
+console.log('📢 Мягкая математика: https://vk.com/smartskillsmaria');
+</script>
+</body>
+</html>
